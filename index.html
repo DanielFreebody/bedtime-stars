@@ -11,9 +11,16 @@
 <body>
 <div class="sky-art" aria-hidden="true"><div class="cloud" style="left:4%;top:11%"></div><div class="cloud" style="right:3%;top:8%;transform:scale(.78)"></div><div class="star" style="left:9%;bottom:12%"></div><div class="star" style="right:16%;bottom:18%;transform:rotate(18deg) scale(.78)"></div><div class="flower" style="left:72%;top:66%"></div><div class="paw" style="left:5%;top:68%;transform:rotate(-12deg)"></div><div class="crown" style="right:8%;top:70%;transform:rotate(10deg)"></div></div>
 <canvas id="fireworks" aria-hidden="true"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <main class="app"><header><div><h1>Bedtime Stars</h1><p class="subtitle">Kenzi, Halle and Zalee's happy end-of-day checklist</p></div><div class="toolbar" aria-label="Daily controls"><span class="date-chip" id="dateLabel"></span><select class="theme-picker" id="themePicker" aria-label="Choose today's background"><option value="auto">Today's background</option><option value="snow">Snow Princess</option><option value="pup">Blue Puppy Day</option><option value="garden">Pink Garden</option><option value="rainbow">Rainbow Sleepytime</option></select><button class="tool-button" id="newDayButton" type="button">New Day</button><button class="tool-button" id="clearButton" type="button">Clear Today</button></div></header><section class="board" id="board" aria-label="Checklist board"></section></main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
+const SUPABASE_URL="https://kngywlqlutfjnrxyovkn.supabase.co";
+const SUPABASE_KEY="sb_publishable_Hig0nsloGtkPbisvKO1Stg_YzidkhkP";
+const supabaseClient=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+let remoteReady=false;
+let loadingRemote=false;
+let realtimeChannel=null;
 const kids=["Kenzi","Halle","Zalee"];
 const tasks=["Dinner","Shower","Final snack","10 min quiet time","Teeth","Toilet","Bed"];
 const quietTask="10 min quiet time";
@@ -29,6 +36,10 @@ function dateSeed(dateKey){return dateKey.split("").reduce((sum,char)=>sum+char.
 function activeTheme(){return state.themeChoice!=="auto"?state.themeChoice:themes[dateSeed(state.date)%themes.length]}
 function storageKey(kid,task){return state.date+"|"+kid+"|"+task}
 function save(){localStorage.setItem("routineDate",state.date);localStorage.setItem("routineThemeChoice",state.themeChoice);localStorage.setItem("routineChecks",JSON.stringify(state.checks))}
+function rowId(kid,task){return storageKey(kid,task)}
+async function syncTask(kid,task,extras){if(!supabaseClient||loadingRemote)return;const key=rowId(kid,task);const payload=Object.assign({id:key,day:state.date,child:kid,task:task,done:!!state.checks[key],quiet_timer_ends_at:null,updated_at:new Date().toISOString()},extras||{});try{await supabaseClient.from("bedtime_tasks").upsert(payload)}catch(err){console.warn("Supabase sync failed",err)}}
+async function loadRemoteForToday(options){if(!supabaseClient)return;loadingRemote=true;try{const previous=Object.assign({},state.checks);const result=await supabaseClient.from("bedtime_tasks").select("*").eq("day",state.date);if(result.error)throw result.error;Object.keys(state.checks).forEach(function(key){if(key.indexOf(state.date+"|")===0)delete state.checks[key]});(result.data||[]).forEach(function(row){const key=storageKey(row.child,row.task);state.checks[key]=!!row.done;if(row.task===quietTask){if(row.quiet_timer_ends_at&&!row.done&&Number(row.quiet_timer_ends_at)>Date.now())saveQuietEnd(row.child,Number(row.quiet_timer_ends_at));else saveQuietEnd(row.child,0)}});save();render();if(options&&options.celebrateRemote){(result.data||[]).forEach(function(row){const key=storageKey(row.child,row.task);if(row.done&&!previous[key])megaCelebrate()})}remoteReady=true}catch(err){console.warn("Could not load Supabase tasks",err)}finally{loadingRemote=false}}
+function setupRealtime(){if(!supabaseClient||realtimeChannel)return;realtimeChannel=supabaseClient.channel("bedtime_tasks_live").on("postgres_changes",{event:"*",schema:"public",table:"bedtime_tasks"},function(payload){const row=payload.new||payload.old;if(row&&row.day===state.date)loadRemoteForToday({celebrateRemote:true})}).subscribe()}
 function quietTimerKey(kid){return "quietTimer|"+state.date+"|"+kid}
 function formatTime(seconds){const mins=Math.floor(seconds/60),secs=seconds%60;return mins+":"+String(secs).padStart(2,"0")}
 function loadQuietEnd(kid){return Number(localStorage.getItem(quietTimerKey(kid))||0)}
@@ -47,10 +58,11 @@ function render(){applyTheme();dateLabel.textContent=prettyDate(state.date);boar
               }
               return;
             }
-            state.checks[key]=input.checked;save();label.classList.toggle("done",input.checked);updateProgress(article,kid);if(input.checked){celebrate(label);megaCelebrate();showToast(kid+" ticked off "+task+"!")}
+            state.checks[key]=input.checked;save();label.classList.toggle("done",input.checked);updateProgress(article,kid);syncTask(kid,task);if(input.checked){celebrate(label);megaCelebrate();showToast(kid+" ticked off "+task+"!")}
           });taskList.appendChild(label)});board.appendChild(article);updateProgress(article,kid)})}
 function startQuietTimer(kid,article,label,input,endTime){
   const key=storageKey(kid,quietTask);
+  syncTask(kid,quietTask,{done:false,quiet_timer_ends_at:endTime});
   if(state.checks[key])return;
   saveQuietEnd(kid,endTime);
   label.classList.add("timer-running");
@@ -70,6 +82,7 @@ function startQuietTimer(kid,article,label,input,endTime){
       label.classList.add("done");
       title.textContent=original;
       save();
+      syncTask(kid,quietTask,{done:true,quiet_timer_ends_at:null});
       updateProgress(article,kid);
       megaCelebrate();
       showToast(kid+" finished quiet time!");
@@ -88,13 +101,13 @@ function megaCelebrate(){const cx=window.innerWidth/2,cy=window.innerHeight*.42;
 function burstAt(x,y,count){const colors=["#ff64b7","#ffc1ec","#d86cff","#b65cff","#fff2fb","#ffd76a"];for(let i=0;i<count;i++){const angle=Math.random()*Math.PI*2,speed=3.2+Math.random()*8.8;particles.push({x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-2.2,size:5+Math.random()*8,color:colors[Math.floor(Math.random()*colors.length)],life:68+Math.random()*38,spin:Math.random()*Math.PI,shape:Math.random()>.42?"star":"square",trail:[]})}for(let r=0;r<18;r++){const angle=Math.random()*Math.PI*2;particles.push({x:x,y:y,vx:Math.cos(angle)*(1.4+Math.random()*2.3),vy:Math.sin(angle)*(1.4+Math.random()*2.3)-.8,size:12+Math.random()*16,color:"rgba(255,255,255,.95)",life:34+Math.random()*14,spin:0,shape:"ring",trail:[]})}if(!animationFrame)animateFireworks()}
 function drawStar(ctx,x,y,outer,inner,points){ctx.beginPath();for(let i=0;i<points*2;i++){const radius=i%2===0?outer:inner;const angle=-Math.PI/2+i*Math.PI/points;const px=x+Math.cos(angle)*radius,py=y+Math.sin(angle)*radius;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}ctx.closePath()}
 function animateFireworks(){animationFrame=requestAnimationFrame(animateFireworks);ctx.clearRect(0,0,window.innerWidth,window.innerHeight);for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=1;if(p.trail){p.trail.push({x:p.x,y:p.y});if(p.trail.length>7)p.trail.shift()}p.x+=p.vx;p.y+=p.vy;p.vy+=.075;p.vx*=.986;p.spin+=.18;if(p.trail&&p.trail.length>1){ctx.save();ctx.globalAlpha=Math.max(p.life/110,0)*.34;ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1,p.size*.18);ctx.beginPath();ctx.moveTo(p.trail[0].x,p.trail[0].y);for(let t=1;t<p.trail.length;t++)ctx.lineTo(p.trail[t].x,p.trail[t].y);ctx.stroke();ctx.restore()}ctx.save();ctx.globalAlpha=Math.max(p.life/96,0);ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.fillStyle=p.color;ctx.strokeStyle=p.color;if(p.shape==="star"){drawStar(ctx,0,0,p.size*.68,p.size*.28,5);ctx.fill()}else if(p.shape==="ring"){ctx.globalAlpha=Math.max(p.life/48,0)*.7;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,p.size*(1.3-p.life/90),0,Math.PI*2);ctx.stroke()}else{ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size)}ctx.restore();if(p.life<=0)particles.splice(i,1)}if(!particles.length){cancelAnimationFrame(animationFrame);animationFrame=0;ctx.clearRect(0,0,window.innerWidth,window.innerHeight)}}
-function clearCurrentDate(){Object.keys(state.checks).forEach(function(key){if(key.indexOf(state.date+"|")===0)delete state.checks[key]});save();render();showToast("Today is fresh again.")}
-document.getElementById("newDayButton").addEventListener("click",function(){state.date=todayKey();state.themeChoice="auto";save();render();showToast("New day, new "+themeNames[activeTheme()]+" background.")});
+async function clearCurrentDate(){Object.keys(state.checks).forEach(function(key){if(key.indexOf(state.date+"|")===0)delete state.checks[key]});kids.forEach(function(kid){saveQuietEnd(kid,0)});save();render();showToast("Today is fresh again.");if(supabaseClient){try{await supabaseClient.from("bedtime_tasks").delete().eq("day",state.date)}catch(err){console.warn("Could not clear Supabase day",err)}}}
+document.getElementById("newDayButton").addEventListener("click",function(){state.date=todayKey();state.themeChoice="auto";save();render();loadRemoteForToday();showToast("New day, new "+themeNames[activeTheme()]+" background.")});
 document.getElementById("clearButton").addEventListener("click",clearCurrentDate);
 themePicker.addEventListener("change",function(){state.themeChoice=themePicker.value;save();render()});
 window.addEventListener("resize",resizeCanvas);
 if(state.date!==todayKey()){state.date=todayKey();state.themeChoice="auto";save()}
-resizeCanvas();render();
+resizeCanvas();render();setupRealtime();loadRemoteForToday();
 </script>
 </body>
 </html>
