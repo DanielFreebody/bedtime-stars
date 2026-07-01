@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bedtime Stars</title>
+<style>
+:root{--ink:#243142;--soft:#526073;--paper:rgba(255,255,255,.54);--line:rgba(36,49,66,.16);--mint:#d86cff;--rose:#ff64b7;--gold:#ffc1ec;--shadow:0 16px 38px rgba(24,34,56,.18);font-family:"Trebuchet MS","Arial Rounded MT Bold",Arial,sans-serif}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);overflow-x:hidden;background:linear-gradient(135deg,#f7c6ff 0%,#ffd1ec 44%,#d8c2ff 100%)}body.theme-snow{background:radial-gradient(circle at 15% 18%,rgba(255,255,255,.9) 0 7%,transparent 8%),radial-gradient(circle at 85% 16%,rgba(255,255,255,.8) 0 5%,transparent 6%),linear-gradient(135deg,#e6c7ff 0%,#fff0fb 50%,#cfc0ff 100%)}body.theme-pup{background:radial-gradient(circle at 18% 18%,rgba(255,255,255,.74) 0 6%,transparent 7%),radial-gradient(circle at 76% 20%,rgba(255,207,86,.42) 0 8%,transparent 9%),linear-gradient(135deg,#c49bff 0%,#ffd4f1 52%,#ffc7e1 100%)}body.theme-garden{background:radial-gradient(circle at 14% 18%,rgba(255,122,166,.38) 0 6%,transparent 7%),radial-gradient(circle at 82% 18%,rgba(255,207,86,.46) 0 8%,transparent 9%),linear-gradient(135deg,#ffd1ec 0%,#f0c2ff 52%,#d4b6ff 100%)}body.theme-rainbow{background:radial-gradient(circle at 16% 18%,rgba(255,255,255,.8) 0 7%,transparent 8%),linear-gradient(135deg,#e2b9ff 0%,#ffb7dc 38%,#ffc8f4 68%,#c7b8ff 100%)}.sky-art{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.9}.cloud,.star,.flower,.paw,.crown{position:absolute;filter:drop-shadow(0 6px 10px rgba(59,78,104,.11))}.cloud{width:180px;height:68px;border-radius:999px;background:rgba(255,255,255,.38)}.cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}.cloud:before{width:82px;height:82px;left:26px;top:-38px}.cloud:after{width:96px;height:96px;right:20px;top:-48px}.star{width:0;height:0;color:rgba(255,128,213,.78);border-right:18px solid transparent;border-bottom:13px solid currentColor;border-left:18px solid transparent;transform:rotate(35deg)}.star:before,.star:after{content:"";position:absolute;width:0;height:0;border-right:18px solid transparent;border-bottom:13px solid currentColor;border-left:18px solid transparent}.star:before{transform:rotate(-70deg);left:-18px;top:0}.star:after{transform:rotate(70deg);left:-18px;top:0}.flower{width:74px;height:74px;border-radius:50%;background:radial-gradient(circle,#ffc1ec 0 17%,transparent 18%),radial-gradient(circle at 50% 8%,#ff7aa6 0 18%,transparent 19%),radial-gradient(circle at 92% 50%,#ff9abd 0 18%,transparent 19%),radial-gradient(circle at 50% 92%,#ff7aa6 0 18%,transparent 19%),radial-gradient(circle at 8% 50%,#ff9abd 0 18%,transparent 19%)}.paw{width:74px;height:58px;background:radial-gradient(circle at 50% 70%,rgba(154,72,192,.18) 0 24%,transparent 25%),radial-gradient(circle at 18% 25%,rgba(154,72,192,.18) 0 14%,transparent 15%),radial-gradient(circle at 39% 12%,rgba(154,72,192,.18) 0 14%,transparent 15%),radial-gradient(circle at 61% 12%,rgba(154,72,192,.18) 0 14%,transparent 15%),radial-gradient(circle at 82% 25%,rgba(154,72,192,.18) 0 14%,transparent 15%)}.crown{width:90px;height:58px;background:linear-gradient(135deg,transparent 0 24%,rgba(255,207,86,.72) 25% 46%,transparent 47%),linear-gradient(225deg,transparent 0 24%,rgba(255,207,86,.72) 25% 46%,transparent 47%),linear-gradient(to top,rgba(255,207,86,.72) 0 44%,transparent 45%);border-bottom:8px solid rgba(255,207,86,.9)}.app{position:relative;z-index:1;width:min(1180px,calc(100% - 28px));margin:0 auto;padding:22px 0 30px}header{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:16px}h1{margin:0;font-size:clamp(2rem,6vw,4.4rem);line-height:.95;letter-spacing:0;color:#1f3144;text-shadow:0 2px 0 rgba(255,255,255,.68)}.subtitle{margin:8px 0 0;font-size:clamp(1rem,2.2vw,1.25rem);color:var(--soft);font-weight:700}.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;align-items:center}button,select,input{font:inherit}.tool-button,.theme-picker{min-height:46px;border:0;border-radius:999px;color:#173047;background:var(--paper);box-shadow:0 8px 22px rgba(24,34,56,.13);font-weight:900}.tool-button{padding:0 16px;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}.tool-button:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(24,34,56,.18)}.theme-picker{padding:0 14px;cursor:pointer}.date-chip{display:inline-flex;align-items:center;min-height:46px;padding:0 16px;border-radius:999px;background:rgba(255,255,255,.48);box-shadow:0 8px 22px rgba(80,38,100,.14);font-weight:900}.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.kid-card{background:var(--paper);border:1px solid rgba(255,255,255,.46);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(7px);min-width:0}.kid-head{padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.kid-name{margin:0;font-size:clamp(1.6rem,3.4vw,2.35rem);letter-spacing:0}.avatar{flex:0 0 auto;width:66px;height:66px;clip-path:polygon(50% 0%,61% 34%,98% 35%,68% 56%,79% 91%,50% 70%,21% 91%,32% 56%,2% 35%,39% 34%);display:grid;place-items:center;color:#fff;font-size:1.75rem;font-weight:900;border:0;text-shadow:0 2px 4px rgba(74,30,98,.35);box-shadow:0 8px 16px rgba(80,38,100,.22)}.kenzi .avatar{background:linear-gradient(135deg,#a86cff,#ff86d2)}.halle .avatar{background:linear-gradient(135deg,#ff64b7,#d86cff)}.zalee .avatar{background:linear-gradient(135deg,#c45cff,#ffc1ec)}.progress-wrap{padding:0 16px 14px}.progress-label{display:flex;justify-content:space-between;gap:8px;margin-bottom:7px;color:var(--soft);font-weight:900;font-size:.95rem}.progress{height:14px;border-radius:999px;background:rgba(154,72,192,.18);overflow:hidden}.progress span{display:block;height:100%;width:0%;border-radius:inherit;background:linear-gradient(90deg,#b65cff,#ff64b7,#ffc1ec);transition:width .24s ease}.tasks{display:grid;gap:10px;padding:0 14px 16px}.task{display:grid;grid-template-columns:52px 1fr;align-items:center;gap:12px;min-height:66px;padding:8px 10px 8px 8px;border:2px solid rgba(36,49,66,.1);border-radius:8px;background:rgba(255,255,255,.38);cursor:pointer;user-select:none;transition:transform .14s ease,border-color .14s ease,background .14s ease}.task:hover{transform:translateY(-1px);border-color:rgba(88,200,168,.55)}.task input{position:absolute;opacity:0;pointer-events:none}.check{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.52);border:4px solid rgba(187,87,219,.24);font-size:1.65rem;font-weight:900;color:transparent;transition:all .16s ease}.task-title{display:block;color:#203044;font-size:clamp(1.02rem,2.2vw,1.22rem);line-height:1.12;font-weight:900}.task.done{background:rgba(233,255,244,.92);border-color:rgba(88,200,168,.72)}.task.done .check{color:#173047;background:var(--mint);border-color:rgba(255,255,255,.86);transform:scale(1.05)}.task.done .task-title{text-decoration:line-through;color:#607084}.finish{margin:0 14px 16px;min-height:56px;border-radius:8px;display:grid;place-items:center;text-align:center;padding:10px;background:rgba(255,207,86,.28);color:#65440b;font-weight:900;border:2px dashed rgba(255,207,86,.9)}canvas{position:fixed;inset:0;z-index:8;pointer-events:none;mix-blend-mode:normal}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,120px);z-index:9;min-width:min(440px,calc(100% - 28px));padding:16px 20px;border-radius:8px;background:rgba(255,255,255,.72);color:#1f3144;box-shadow:var(--shadow);text-align:center;font-weight:900;font-size:1.15rem;transition:transform .26s ease}.toast.show{transform:translate(-50%,0)}@media (max-width:860px){header{grid-template-columns:1fr;align-items:start}.toolbar{justify-content:flex-start}.board{grid-template-columns:1fr}}@media (max-width:430px){.app{width:min(100% - 18px,1180px);padding-top:14px}.tool-button,.theme-picker,.date-chip{width:100%;justify-content:center}.theme-picker{text-align:center}}
+</style>
+</head>
+<body>
+<div class="sky-art" aria-hidden="true"><div class="cloud" style="left:4%;top:11%"></div><div class="cloud" style="right:3%;top:8%;transform:scale(.78)"></div><div class="star" style="left:9%;bottom:12%"></div><div class="star" style="right:16%;bottom:18%;transform:rotate(18deg) scale(.78)"></div><div class="flower" style="left:72%;top:66%"></div><div class="paw" style="left:5%;top:68%;transform:rotate(-12deg)"></div><div class="crown" style="right:8%;top:70%;transform:rotate(10deg)"></div></div>
+<canvas id="fireworks" aria-hidden="true"></canvas>
+<main class="app"><header><div><h1>Bedtime Stars</h1><p class="subtitle">Kenzi, Halle and Zalee's happy end-of-day checklist</p></div><div class="toolbar" aria-label="Daily controls"><span class="date-chip" id="dateLabel"></span><select class="theme-picker" id="themePicker" aria-label="Choose today's background"><option value="auto">Today's background</option><option value="snow">Snow Princess</option><option value="pup">Blue Puppy Day</option><option value="garden">Pink Garden</option><option value="rainbow">Rainbow Sleepytime</option></select><button class="tool-button" id="newDayButton" type="button">New Day</button><button class="tool-button" id="clearButton" type="button">Clear Today</button></div></header><section class="board" id="board" aria-label="Checklist board"></section></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const kids=["Kenzi","Halle","Zalee"];
+const tasks=["Dinner","Shower","Final snack","10 min quiet time","Teeth","Toilet","Bed"];
+const quietTask="10 min quiet time";
+const quietTimers={};
+const themes=["snow","pup","garden","rainbow"];
+const themeNames={snow:"Snow Princess",pup:"Blue Puppy Day",garden:"Pink Garden",rainbow:"Rainbow Sleepytime"};
+const state={date:localStorage.getItem("routineDate")||todayKey(),themeChoice:localStorage.getItem("routineThemeChoice")||"auto",checks:JSON.parse(localStorage.getItem("routineChecks")||"{}")};
+const board=document.getElementById("board"),dateLabel=document.getElementById("dateLabel"),themePicker=document.getElementById("themePicker"),toast=document.getElementById("toast"),canvas=document.getElementById("fireworks"),ctx=canvas.getContext("2d"),particles=[];
+let toastTimer=0,animationFrame=0;
+function todayKey(){const now=new Date();return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")}
+function prettyDate(dateKey){const parts=dateKey.split("-").map(Number);return new Date(parts[0],parts[1]-1,parts[2]).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})}
+function dateSeed(dateKey){return dateKey.split("").reduce((sum,char)=>sum+char.charCodeAt(0),0)}
+function activeTheme(){return state.themeChoice!=="auto"?state.themeChoice:themes[dateSeed(state.date)%themes.length]}
+function storageKey(kid,task){return state.date+"|"+kid+"|"+task}
+function save(){localStorage.setItem("routineDate",state.date);localStorage.setItem("routineThemeChoice",state.themeChoice);localStorage.setItem("routineChecks",JSON.stringify(state.checks))}
+function quietTimerKey(kid){return "quietTimer|"+state.date+"|"+kid}
+function formatTime(seconds){const mins=Math.floor(seconds/60),secs=seconds%60;return mins+":"+String(secs).padStart(2,"0")}
+function loadQuietEnd(kid){return Number(localStorage.getItem(quietTimerKey(kid))||0)}
+function saveQuietEnd(kid,endTime){if(endTime)localStorage.setItem(quietTimerKey(kid),String(endTime));else localStorage.removeItem(quietTimerKey(kid))}
+function applyTheme(){document.body.className="theme-"+activeTheme();themePicker.value=state.themeChoice}
+function render(){applyTheme();dateLabel.textContent=prettyDate(state.date);board.innerHTML="";kids.forEach(function(kid){const article=document.createElement("article");article.className="kid-card "+kid.toLowerCase();article.innerHTML='<div class="kid-head"><h2 class="kid-name">'+kid+'</h2><div class="avatar" aria-hidden="true">'+kid[0]+'</div></div><div class="progress-wrap"><div class="progress-label"><span>Progress</span><span data-count></span></div><div class="progress" aria-hidden="true"><span data-bar></span></div></div><div class="tasks"></div><p class="finish" data-finish>Ready for one lovely sleep.</p>';const taskList=article.querySelector(".tasks");tasks.forEach(function(task){const key=storageKey(kid,task);const label=document.createElement("label");label.className="task"+(state.checks[key]?" done":"");label.innerHTML='<input type="checkbox" '+(state.checks[key]?"checked":"")+' aria-label="'+kid+" "+task+'"><span class="check" aria-hidden="true">✓</span><span class="task-title">'+task+'</span>';const input=label.querySelector("input");
+          if(task===quietTask&&!state.checks[key]){const savedEnd=loadQuietEnd(kid);if(savedEnd>Date.now())startQuietTimer(kid,article,label,input,savedEnd)}
+          input.addEventListener("change",function(){
+            if(task===quietTask){
+              if(input.checked){
+                input.checked=false;
+                label.classList.remove("done");
+                startQuietTimer(kid,article,label,input,Date.now()+10*60*1000);
+              }else{
+                stopQuietTimer(kid,label,false);
+              }
+              return;
+            }
+            state.checks[key]=input.checked;save();label.classList.toggle("done",input.checked);updateProgress(article,kid);if(input.checked){celebrate(label);megaCelebrate();showToast(kid+" ticked off "+task+"!")}
+          });taskList.appendChild(label)});board.appendChild(article);updateProgress(article,kid)})}
+function startQuietTimer(kid,article,label,input,endTime){
+  const key=storageKey(kid,quietTask);
+  if(state.checks[key])return;
+  saveQuietEnd(kid,endTime);
+  label.classList.add("timer-running");
+  const title=label.querySelector(".task-title");
+  const original="10 min quiet time";
+  clearInterval(quietTimers[kid]);
+  function tick(){
+    const remaining=Math.max(0,Math.ceil((endTime-Date.now())/1000));
+    title.textContent=remaining>0?original+" - "+formatTime(remaining):original;
+    if(remaining<=0){
+      clearInterval(quietTimers[kid]);
+      delete quietTimers[kid];
+      saveQuietEnd(kid,0);
+      state.checks[key]=true;
+      input.checked=true;
+      label.classList.remove("timer-running");
+      label.classList.add("done");
+      title.textContent=original;
+      save();
+      updateProgress(article,kid);
+      megaCelebrate();
+      showToast(kid+" finished quiet time!");
+    }
+  }
+  tick();
+  quietTimers[kid]=setInterval(tick,1000);
+  showToast(kid+" quiet time started.");
+}
+function stopQuietTimer(kid,label,clearSaved){clearInterval(quietTimers[kid]);delete quietTimers[kid];if(clearSaved)saveQuietEnd(kid,0);label.classList.remove("timer-running");const title=label.querySelector(".task-title");if(title)title.textContent="10 min quiet time"}
+function updateProgress(article,kid){const done=tasks.filter(function(task){return state.checks[storageKey(kid,task)]}).length;const percent=Math.round(done/tasks.length*100);article.querySelector("[data-count]").textContent=done+"/"+tasks.length;article.querySelector("[data-bar]").style.width=percent+"%";const finish=article.querySelector("[data-finish]");finish.textContent=done===tasks.length?kid+" is all ready for bed!":tasks.length-done+" bedtime steps to go.";if(done===tasks.length){burstAt(window.innerWidth/2,window.innerHeight*.34,140);setTimeout(function(){burstAt(window.innerWidth*.35,window.innerHeight*.42,90)},160);setTimeout(function(){burstAt(window.innerWidth*.65,window.innerHeight*.42,90)},280)}}
+function showToast(message){toast.textContent=message;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.classList.remove("show")},1800)}
+function resizeCanvas(){canvas.width=window.innerWidth*window.devicePixelRatio;canvas.height=window.innerHeight*window.devicePixelRatio;ctx.setTransform(window.devicePixelRatio,0,0,window.devicePixelRatio,0,0)}
+function celebrate(element){const box=element.getBoundingClientRect();burstAt(box.left+box.width/2,box.top+box.height/2,45)}
+function megaCelebrate(){const cx=window.innerWidth/2,cy=window.innerHeight*.42;burstAt(cx,cy,120);setTimeout(function(){burstAt(cx-window.innerWidth*.16,cy+20,70)},130);setTimeout(function(){burstAt(cx+window.innerWidth*.16,cy+20,70)},220);setTimeout(function(){burstAt(cx,cy-window.innerHeight*.13,85)},330)}
+function burstAt(x,y,count){const colors=["#ff64b7","#ffc1ec","#d86cff","#b65cff","#fff2fb","#ffd76a"];for(let i=0;i<count;i++){const angle=Math.random()*Math.PI*2,speed=3.2+Math.random()*8.8;particles.push({x:x,y:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-2.2,size:5+Math.random()*8,color:colors[Math.floor(Math.random()*colors.length)],life:68+Math.random()*38,spin:Math.random()*Math.PI,shape:Math.random()>.42?"star":"square",trail:[]})}for(let r=0;r<18;r++){const angle=Math.random()*Math.PI*2;particles.push({x:x,y:y,vx:Math.cos(angle)*(1.4+Math.random()*2.3),vy:Math.sin(angle)*(1.4+Math.random()*2.3)-.8,size:12+Math.random()*16,color:"rgba(255,255,255,.95)",life:34+Math.random()*14,spin:0,shape:"ring",trail:[]})}if(!animationFrame)animateFireworks()}
+function drawStar(ctx,x,y,outer,inner,points){ctx.beginPath();for(let i=0;i<points*2;i++){const radius=i%2===0?outer:inner;const angle=-Math.PI/2+i*Math.PI/points;const px=x+Math.cos(angle)*radius,py=y+Math.sin(angle)*radius;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}ctx.closePath()}
+function animateFireworks(){animationFrame=requestAnimationFrame(animateFireworks);ctx.clearRect(0,0,window.innerWidth,window.innerHeight);for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.life-=1;if(p.trail){p.trail.push({x:p.x,y:p.y});if(p.trail.length>7)p.trail.shift()}p.x+=p.vx;p.y+=p.vy;p.vy+=.075;p.vx*=.986;p.spin+=.18;if(p.trail&&p.trail.length>1){ctx.save();ctx.globalAlpha=Math.max(p.life/110,0)*.34;ctx.strokeStyle=p.color;ctx.lineWidth=Math.max(1,p.size*.18);ctx.beginPath();ctx.moveTo(p.trail[0].x,p.trail[0].y);for(let t=1;t<p.trail.length;t++)ctx.lineTo(p.trail[t].x,p.trail[t].y);ctx.stroke();ctx.restore()}ctx.save();ctx.globalAlpha=Math.max(p.life/96,0);ctx.translate(p.x,p.y);ctx.rotate(p.spin);ctx.fillStyle=p.color;ctx.strokeStyle=p.color;if(p.shape==="star"){drawStar(ctx,0,0,p.size*.68,p.size*.28,5);ctx.fill()}else if(p.shape==="ring"){ctx.globalAlpha=Math.max(p.life/48,0)*.7;ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,p.size*(1.3-p.life/90),0,Math.PI*2);ctx.stroke()}else{ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size)}ctx.restore();if(p.life<=0)particles.splice(i,1)}if(!particles.length){cancelAnimationFrame(animationFrame);animationFrame=0;ctx.clearRect(0,0,window.innerWidth,window.innerHeight)}}
+function clearCurrentDate(){Object.keys(state.checks).forEach(function(key){if(key.indexOf(state.date+"|")===0)delete state.checks[key]});save();render();showToast("Today is fresh again.")}
+document.getElementById("newDayButton").addEventListener("click",function(){state.date=todayKey();state.themeChoice="auto";save();render();showToast("New day, new "+themeNames[activeTheme()]+" background.")});
+document.getElementById("clearButton").addEventListener("click",clearCurrentDate);
+themePicker.addEventListener("change",function(){state.themeChoice=themePicker.value;save();render()});
+window.addEventListener("resize",resizeCanvas);
+if(state.date!==todayKey()){state.date=todayKey();state.themeChoice="auto";save()}
+resizeCanvas();render();
+</script>
+</body>
+</html>
